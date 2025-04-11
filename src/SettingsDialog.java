@@ -412,7 +412,7 @@ public class SettingsDialog extends JDialog {
 		notTimeL = new JLabel(idiomaString(language)[37]);
 		notTimeL.setFont(font);
 		notiTimeS = new SliderGradient();
-		if (conf[25] == null || !TextEffect.isNumeric(conf[25])) {
+		if (conf[25] == null || !TextEffect.isInteger(conf[25])) {
 			notiTimeS.setValue(3);
 		} else {
 			if (Integer.valueOf(conf[25]) < 1)
@@ -576,7 +576,7 @@ public class SettingsDialog extends JDialog {
 						+ idiomaString(language)[9]);
 		op6.setFont(font);
 		sliderGradient1 = new SliderGradient();
-		if (conf[3] == null || !TextEffect.isNumeric(conf[3])) {
+		if (conf[3] == null || !TextEffect.isInteger(conf[3])) {
 			sliderGradient1.setValue(10);
 		} else {
 			if (Integer.valueOf(conf[3]) < 1)
@@ -1463,7 +1463,7 @@ public class SettingsDialog extends JDialog {
 		if (conf[2] == null || conf[2].equalsIgnoreCase("null")
 				|| (!conf[2].equalsIgnoreCase("true") && !conf[2].equalsIgnoreCase("false")))
 			conf[2] = "false";
-		if (conf[3] == null || conf[3].equalsIgnoreCase("null") || (!TextEffect.isNumeric(conf[3])))
+		if (conf[3] == null || conf[3].equalsIgnoreCase("null") || (!TextEffect.isInteger(conf[3])))
 			conf[3] = "10";
 		if (conf[4] == null || conf[4].equalsIgnoreCase("null")
 				|| (!conf[4].equalsIgnoreCase("true") && !conf[4].equalsIgnoreCase("false")))
@@ -1533,7 +1533,7 @@ public class SettingsDialog extends JDialog {
 						&& !conf[24].equalsIgnoreCase("4") && !conf[24].equalsIgnoreCase("5")
 						&& !conf[24].equalsIgnoreCase("6")))
 			conf[24] = "0";
-		if (conf[25] == null || conf[5].equalsIgnoreCase("null") || (!TextEffect.isNumeric(conf[25])))
+		if (conf[25] == null || conf[5].equalsIgnoreCase("null") || (!TextEffect.isInteger(conf[25])))
 			conf[25] = "3";
 		if (conf[26] == null || conf[26].equalsIgnoreCase("null")
 				|| (!conf[26].equalsIgnoreCase("true") && !conf[26].equalsIgnoreCase("false")))

@@ -57,9 +57,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -554,7 +557,7 @@ public class Main extends JFrame {
 			// daily average
 			int var = 0, counter = 0, nbOfDays = 0;
 			while (var < conLY.size()) {
-				if (TextEffect.isNumeric(conLY.get(var))) {
+				if (TextEffect.isInteger(conLY.get(var))) {
 					counter += Integer.valueOf(conLY.get(var));
 					nbOfDays++;
 				}
@@ -587,7 +590,7 @@ public class Main extends JFrame {
 			// daily average
 			int var = 0, counter = 0, nbOfDays = 0;
 			while (var < conLY2.size()) {
-				if (TextEffect.isNumeric(conLY2.get(var))) {
+				if (TextEffect.isInteger(conLY2.get(var))) {
 					counter += Integer.valueOf(conLY2.get(var));
 					nbOfDays++;
 				}
@@ -620,7 +623,7 @@ public class Main extends JFrame {
 			// daily average
 			int var = 0, counter = 0, nbOfDays = 0;
 			while (var < conLY3.size()) {
-				if (TextEffect.isNumeric(conLY3.get(var))) {
+				if (TextEffect.isInteger(conLY3.get(var))) {
 					counter += Integer.valueOf(conLY3.get(var));
 					nbOfDays++;
 				}
@@ -653,7 +656,7 @@ public class Main extends JFrame {
 			// daily average
 			int var = 0, counter = 0, nbOfDays = 0;
 			while (var < conLY4.size()) {
-				if (TextEffect.isNumeric(conLY4.get(var))) {
+				if (TextEffect.isInteger(conLY4.get(var))) {
 					counter += Integer.valueOf(conLY4.get(var));
 					nbOfDays++;
 				}
@@ -9296,7 +9299,7 @@ public class Main extends JFrame {
 			langIndex = 3;
 		}
 		/* AUTOLOCK TIME */
-		if (conf[3] == null || !TextEffect.isNumeric(conf[3])) {
+		if (conf[3] == null || !TextEffect.isInteger(conf[3])) {
 			INACTIVITY_DELAY = 10 * 60 * 1000;
 		} else {
 			if (Integer.valueOf(conf[3]) < 1)
@@ -9454,7 +9457,7 @@ public class Main extends JFrame {
 				if (customSeparated) { // CUSTOMIZATION THE NEXT DAY VALUES
 					String nextDayValues[] = customSep();
 					for (int i = 0; i < 7; i++)// set of 1000 -> 50
-						panelCnum[i].setText(TextEffect.isNumeric(nextDayValues[i])
+						panelCnum[i].setText(TextEffect.isInteger(nextDayValues[i])
 								? (Integer.valueOf(panelCnum[i].getText()) - Integer.valueOf(nextDayValues[i]) + "")
 								: "0");
 					panelCnum[7].setText("");// pix
@@ -9660,7 +9663,7 @@ public class Main extends JFrame {
 			panelValue[i].addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusLost(FocusEvent e) {
-					if (!TextEffect.isNumeric(panelValue[index].getText()))
+					if (!TextEffect.isInteger(panelValue[index].getText()))
 						panelValue[index].setText("0");
 					else if (Integer.valueOf(panelValue[index].getText()) > moneyValues[index]) {
 						Intro.startBorderAnimation(panelValue[index]);
@@ -9743,7 +9746,7 @@ public class Main extends JFrame {
 				old.requestFocusInWindow();
 			}
 			for (int index = 0; index < 8; index++) {
-				if (!TextEffect.isNumeric(panelValue[index].getText()))
+				if (!TextEffect.isInteger(panelValue[index].getText()))
 					panelValue[index].setText("0");
 				else if (Integer.valueOf(panelValue[index].getText()) > moneyValues[index]) {
 					Intro.startBorderAnimation(panelValue[index]);
@@ -9863,7 +9866,7 @@ public class Main extends JFrame {
 								int LAST_ITEM = 0;
 								while (LAST_ITEM < 14 && !sepLabel[0][0].getText().isBlank()) {
 									if (sepLabel[LAST_ITEM][0].getText().isBlank()) {
-										if (TextEffect.isNumeric(sepLabel[LAST_ITEM - 1][0].getText())) {
+										if (TextEffect.isInteger(sepLabel[LAST_ITEM - 1][0].getText())) {
 											if (Integer.valueOf(sepLabel[LAST_ITEM - 1][0].getText()) < 0)
 												copyToClipboard(
 														(-1 * Integer.valueOf(sepLabel[LAST_ITEM - 1][0].getText()))
@@ -9874,7 +9877,7 @@ public class Main extends JFrame {
 									LAST_ITEM++;
 								}
 								if (LAST_ITEM == 14)
-									if (TextEffect.isNumeric(sepLabel[13][0].getText())) {
+									if (TextEffect.isInteger(sepLabel[13][0].getText())) {
 										if (Integer.valueOf(sepLabel[13][0].getText()) < 0)
 											copyToClipboard((-1 * Integer.valueOf(sepLabel[13][0].getText())) + "");
 									}
@@ -9901,7 +9904,7 @@ public class Main extends JFrame {
 									/* Calculate the total */
 									int temp_value = 0;
 									for (int i = 0; i < 14; i++)
-										temp_value += (TextEffect.isNumeric(sepLabel[i][0].getText())
+										temp_value += (TextEffect.isInteger(sepLabel[i][0].getText())
 												? Integer.valueOf(sepLabel[i][0].getText())
 												: 0);
 									/* Clean the values for next week */
@@ -9970,7 +9973,7 @@ public class Main extends JFrame {
 							sepLabel[i][1].setText(TextEffect.capitalizeString(sepLabel[i][1].getText()));
 							TextEffect.adjustFontSize(sepLabel[i][1]);
 							/* Make the positive values green and the negative one red */
-							if (TextEffect.isNumeric(sepLabel[i][0].getText())) {
+							if (TextEffect.isInteger(sepLabel[i][0].getText())) {
 								if (Integer.valueOf(sepLabel[i][0].getText()) > 0) {
 									for (int j = 0; j < 3; j++) {
 										sepLabel[i][j].setBackground(Intro.greenC);
@@ -9989,7 +9992,7 @@ public class Main extends JFrame {
 								}
 							}
 							/* Calculate the total */
-							temp_value += (TextEffect.isNumeric(sepLabel[i][0].getText())
+							temp_value += (TextEffect.isInteger(sepLabel[i][0].getText())
 									? Integer.valueOf(sepLabel[i][0].getText())
 									: 0);
 						}
@@ -10015,7 +10018,7 @@ public class Main extends JFrame {
 			datePicker.setValidationOnNull(true);
 		}
 		for (int i = 0; i < 14; i++)
-			temp_value += (TextEffect.isNumeric(sepLabel[i][0].getText()) ? Integer.valueOf(sepLabel[i][0].getText())
+			temp_value += (TextEffect.isInteger(sepLabel[i][0].getText()) ? Integer.valueOf(sepLabel[i][0].getText())
 					: 0);
 		totalSep.setText("$" + temp_value);
 		totalSep.setBounds(0, 525, 598, 50);
@@ -10036,7 +10039,7 @@ public class Main extends JFrame {
 			if (!sepLabel[i][0].getText().isBlank())
 				position = i;
 			/* Make the positive values green and the negative one red */
-			if (TextEffect.isNumeric(sepLabel[i][0].getText())) {
+			if (TextEffect.isInteger(sepLabel[i][0].getText())) {
 				if (Integer.valueOf(sepLabel[i][0].getText()) > 0) {
 					for (int j = 0; j < 3; j++) {
 						sepLabel[i][j].setBackground(Intro.greenC);
@@ -10087,7 +10090,7 @@ public class Main extends JFrame {
 						LAST_ITEM++;
 					}
 					if (LAST_ITEM == 14)
-						if (TextEffect.isNumeric(sepLabel[13][0].getText())) {
+						if (TextEffect.isInteger(sepLabel[13][0].getText())) {
 							if (Integer.valueOf(sepLabel[13][0].getText()) < 0)
 								copyToClipboard((-1 * Integer.valueOf(sepLabel[13][0].getText())) + "");
 						}
@@ -10112,7 +10115,7 @@ public class Main extends JFrame {
 						/* Calculate the total */
 						int temp_value = 0;
 						for (int i = 0; i < 14; i++)
-							temp_value += (TextEffect.isNumeric(sepLabel[i][0].getText())
+							temp_value += (TextEffect.isInteger(sepLabel[i][0].getText())
 									? Integer.valueOf(sepLabel[i][0].getText())
 									: 0);
 						/* Clean the values for next week */
@@ -10259,18 +10262,18 @@ public class Main extends JFrame {
 		if (conf[4] == null || conf[4].equals("false"))
 			saveProgress();
 		for (int i = 0; i < 8; i++)// Caja empty values 0
-			if (!TextEffect.isNumeric(panelCnum[i].getText())
-					|| (TextEffect.isNumeric(panelCnum[i].getText()) && Integer.valueOf(panelCnum[i].getText()) < 0))
+			if (!TextEffect.isInteger(panelCnum[i].getText())
+					|| (TextEffect.isInteger(panelCnum[i].getText()) && Integer.valueOf(panelCnum[i].getText()) < 0))
 				panelCnum[i].setText(0 + "");
-		if (!TextEffect.isNumeric(initialDay.getText())
-				|| (TextEffect.isNumeric(initialDay.getText()) && Integer.valueOf(initialDay.getText()) < 0))
+		if (!TextEffect.isInteger(initialDay.getText())
+				|| (TextEffect.isInteger(initialDay.getText()) && Integer.valueOf(initialDay.getText()) < 0))
 			initialDay.setText(0 + "");
 		for (int i = 8; i < 16; i++)// spent 0
-			if (!TextEffect.isNumeric(gastosTable[i].getText()) || (TextEffect.isNumeric(gastosTable[i].getText())
+			if (!TextEffect.isInteger(gastosTable[i].getText()) || (TextEffect.isInteger(gastosTable[i].getText())
 					&& Integer.valueOf(gastosTable[i].getText()) < 0))
 				gastosTable[i].setText("");
 		for (int i = 8; i < 16; i++)// added 0
-			if (!TextEffect.isNumeric(agregadoTable[i].getText()) || (TextEffect.isNumeric(agregadoTable[i].getText())
+			if (!TextEffect.isInteger(agregadoTable[i].getText()) || (TextEffect.isInteger(agregadoTable[i].getText())
 					&& Integer.valueOf(agregadoTable[i].getText()) < 0))
 				agregadoTable[i].setText("");
 		for (int i = 0; i < 8; i++) {// TitleCase gastos and agg
@@ -10303,7 +10306,7 @@ public class Main extends JFrame {
 			totalCol = 0;
 			for (int j = 0; j < 20; j++) {
 				String text = details[i][j].getText();
-				int value = TextEffect.isNumeric(text) ? Integer.valueOf(text) : -1;
+				int value = TextEffect.isInteger(text) ? Integer.valueOf(text) : -1;
 				if (value >= 0) {
 					totalCol += value;
 				} else {
@@ -10341,7 +10344,7 @@ public class Main extends JFrame {
 				totalCol = 0;
 				for (int j = 0; j < 20; j++) {
 					String text = detailsM[i][j].getText();
-					int value = TextEffect.isNumeric(text) ? Integer.valueOf(text) : -1;
+					int value = TextEffect.isInteger(text) ? Integer.valueOf(text) : -1;
 					if (value >= 0) {
 						totalCol += value;
 					} else {
@@ -10399,7 +10402,7 @@ public class Main extends JFrame {
 				z = 0;
 				for (int i = 0; i < 6; i++)
 					for (int j = 0; j < 20; j++) {
-						if (!details[i][j].getText().isBlank() && TextEffect.isNumeric(details[i][j].getText()))
+						if (!details[i][j].getText().isBlank() && TextEffect.isInteger(details[i][j].getText()))
 							if (numbers[z] == null)
 								logFile.write(Integer.valueOf(details[i][j].getText()) + " - "
 										+ new SimpleDateFormat("HH").format(Calendar.getInstance().getTime()) + ":"
@@ -10686,6 +10689,9 @@ public class Main extends JFrame {
 			case "DELETE_SELL" -> "RETIRAR ARTÍCULO ANTIGUO VENDIDO";
 			case "DELETE_TOOLTIP" -> "SI UN CLIENTE DEVUELVE UN ARTÍCULO, PUEDE DEVOLVERLO AL STOCK DESDE AQUÍ";
 			case "NO_SELLER" -> "SIN VENDADOR";
+			case "SALES_EXCCED" -> " VENTAS SUPERARON LA CANTIDAD DISPONIBLE";
+			case "EXISTED" -> "ARTÍCULO EXISTENTE";
+			case "NEW" -> "ARTÍCULO NUEVO";
 			default -> "";
 			};
 		case PORTUGUES:
@@ -10901,6 +10907,9 @@ public class Main extends JFrame {
 			case "DELETE_SELL" -> "REMOVER ITEM ANTIGO VENDIDO";
 			case "DELETE_TOOLTIP" -> "SE UM CLIENTE DEVOLVER UM ITEM, VOCÊ PODE DEVOLVÊ-LO AO ESTOQUE AQUI";
 			case "NO_SELLER" -> "SEM VENDEDOR";
+			case "SALES_EXCCED" -> " VENDAS EXCEDERAM A QUANTIDADE DISPONÍVEL";
+			case "EXISTED" -> "ITEM EXISTENTE";
+			case "NEW" -> "NOVO ITEM";
 			default -> "";
 			};
 		case ENGLISH:
@@ -11116,6 +11125,9 @@ public class Main extends JFrame {
 			case "DELETE_SELL" -> "REMOVE OLD ITEM SOLD";
 			case "DELETE_TOOLTIP" -> "IF A CLIENT RETURN AN ITEM, YOU CAN RETURN IT TO STOCK FROM HERE";
 			case "NO_SELLER" -> "WITHOUT SELLER";
+			case "SALES_EXCCED" -> " SALES EXCEEDED THE AVAILABLE QUANTITY";
+			case "EXISTED" -> "EXISTED ITEM";
+			case "NEW" -> "NEW ITEM";
 			default -> "";
 			};
 		case FRENCH:
@@ -11331,6 +11343,9 @@ public class Main extends JFrame {
 			case "DELETE_TOOLTIP" ->
 				"SI UN CLIENT RETOURNE UN ARTICLE, VOUS POUVEZ LE RETOURNER AU STOCK À PARTIR D'ICI";
 			case "NO_SELLER" -> "PAS DE VENDEUR";
+			case "SALES_EXCCED" -> " VENTES ONT DÉPASSÉ LA QUANTITÉ DISPONIBLE";
+			case "EXISTED" -> "ARTICLE EXISTANT";
+			case "NEW" -> "NOUVEL ARTICLE";
 			default -> "";
 			};
 		default:
@@ -11680,7 +11695,7 @@ public class Main extends JFrame {
 		String aggString = "";
 		int num = 1;
 		for (int i = 8; i < 16; i++)
-			if (TextEffect.isNumeric(agregadoTable[i].getText())) {
+			if (TextEffect.isInteger(agregadoTable[i].getText())) {
 				aggString += num + "- "
 						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + " -> $"
 						+ agregadoTable[i].getText() + "\n";
@@ -11693,7 +11708,7 @@ public class Main extends JFrame {
 	private int nbAgregados() {
 		int agregado = 0;
 		for (int i = 8; i < 16; i++)
-			if (TextEffect.isNumeric(agregadoTable[i].getText()))
+			if (TextEffect.isInteger(agregadoTable[i].getText()))
 				agregado++;
 		return agregado;
 	}
@@ -11703,7 +11718,7 @@ public class Main extends JFrame {
 		String gasString = "";
 		int num = 1;
 		for (int i = 8; i < 16; i++)
-			if (TextEffect.isNumeric(gastosTable[i].getText())) {
+			if (TextEffect.isInteger(gastosTable[i].getText())) {
 				gasString += num + "- "
 						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + " -> $"
 						+ gastosTable[i].getText() + "\n";
@@ -11716,7 +11731,7 @@ public class Main extends JFrame {
 	private int nbGastos() {
 		int gastos = 0;
 		for (int i = 8; i < 16; i++)
-			if (TextEffect.isNumeric(gastosTable[i].getText()))
+			if (TextEffect.isInteger(gastosTable[i].getText()))
 				gastos++;
 		return gastos;
 	}
@@ -11726,7 +11741,7 @@ public class Main extends JFrame {
 		int ventas = 0;
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 20; j++)
-				if (TextEffect.isNumeric(details[i][j].getText()))
+				if (TextEffect.isInteger(details[i][j].getText()))
 					ventas++;
 		return ventas;
 	}
@@ -11825,7 +11840,7 @@ public class Main extends JFrame {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					int pix = 0;
 					for (int i = 0; i < 5; i++)
-						if (TextEffect.isNumeric(pixNmb[i].getText()))
+						if (TextEffect.isInteger(pixNmb[i].getText()))
 							pix += Integer.valueOf(pixNmb[i].getText());
 					panelCnum[7].setText(pix + "");
 					sumF();
@@ -13419,17 +13434,28 @@ public class Main extends JFrame {
 			while ((line = dataOpened.readLine()) != null) {
 				String[] row = line.split(",");
 
-				// Check row length before processing
-				if (row.length < 7 || !TextEffect.isNumeric(row[1]) || !TextEffect.isNumeric(row[2])) {
-					System.err.println("Skipping invalid row: " + line);
-					continue;
-				}
-				String item = row[0], category = row[3];
-				int total = Integer.parseInt(row[1]), sold = Integer.parseInt(row[2]), id = Integer.parseInt(row[5]);
-				double unitprice = Double.parseDouble(row[6]), price = Double.parseDouble(row[4]);
+				String[] values = new String[] { "", "0", "0", "", "0", "0", "0" }; // Default values
 
+				for (int i = 0; i < row.length && i < 7; i++) {
+					String val = row[i].trim();
+					switch (i) {
+					case 1:
+					case 2:
+					case 5: // Numeric fields
+						values[i] = TextEffect.isInteger(val) ? val : "0";
+						break;
+					case 4:
+					case 6: // Double fields
+						values[i] = TextEffect.isDouble(val) ? val : "0";
+						break;
+					default: // String fields (0, 3)
+						values[i] = val;
+					}
+				}
 				try {
-					merchandise.add(new Merchandise(item, total, sold, category, price, id, unitprice));
+					merchandise.add(new Merchandise(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]),
+							values[3], Double.parseDouble(values[4]), Integer.parseInt(values[5]),
+							Double.parseDouble(values[6])));
 				} catch (NumberFormatException e) {
 					writeError(e);
 				}
@@ -13497,7 +13523,6 @@ public class Main extends JFrame {
 				tableModel.addRow(new Object[] { merchandise.getName(), merchandise.getTotal(),
 						(merchandise.getTotal() - merchandise.getSold()), merchandise.getSold(),
 						merchandise.getUnitPrice(), merchandise.getPrice(), merchandise.getCategory() });
-
 		}
 
 		table = new JTable(tableModel);
@@ -13572,7 +13597,8 @@ public class Main extends JFrame {
 				}
 			}
 		});
-		JLabel totalL = new JLabel(merchandiseList.size() + (merchandiseList.size() > 1 ? " ITEMS" : " ITEM"));
+		JLabel totalL = new JLabel(table.getRowSorter().getViewRowCount()
+				+ (table.getRowSorter().getViewRowCount() > 1 ? " ITEMS" : " ITEM"));
 		totalL.setFont(new Font("Arial", Font.BOLD, 18));
 		totalL.setHorizontalAlignment(0);
 		totalL.setForeground(fg);
@@ -13715,11 +13741,10 @@ public class Main extends JFrame {
 
 			// Load merchandise data
 			List<Merchandise> merchandiseList = merchandise;
-			for (Merchandise merchandise : merchandiseList) {
+			for (Merchandise merchandise : merchandiseList)
 				tableModel.addRow(new Object[] { merchandise.getName(), merchandise.getTotal(), merchandise.getSold(),
 						merchandise.getTotal() - merchandise.getSold(), merchandise.getUnitPrice(),
 						merchandise.getPrice(), merchandise.getCategory(), merchandise.getID(), "X" });
-			}
 
 			table = new JTable(tableModel);
 			table.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -13788,7 +13813,7 @@ public class Main extends JFrame {
 					((DefaultTableModel) table.getModel()).removeRow(row);
 				}
 			};
-			new ButtonColumn(table, deleteAction, 8); // Column index 8 for "Action"
+			new ButtonColumn(table, deleteAction, 8);
 
 			JLabel totalL = new JLabel(merchandiseList.size() + (merchandiseList.size() > 1 ? " ITEMS" : " ITEM"));
 			totalL.setFont(new Font("Arial", Font.BOLD, 18));
@@ -13831,7 +13856,6 @@ public class Main extends JFrame {
 			addRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			addRowButton.addActionListener(_ -> {
 				tableModel.addRow(new Object[] { "", 0, 0, 0, 0, 0, "", lastID() + 1, "X" });
-
 				int rowCount = table.getRowSorter().getViewRowCount();
 				totalL.setText(rowCount + (rowCount > 1 ? " ITEMS" : " ITEM"));
 			});
@@ -13911,7 +13935,8 @@ public class Main extends JFrame {
 		File tempFile = new File(extraF, "temp_stock.dll");
 		Map<String, String> nameChanges = new HashMap<>();
 		List<Merchandise> newMerch = new ArrayList<Merchandise>();
-		try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
+		try (PrintWriter writer = new PrintWriter(
+				new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8))) {
 			for (int row = 0; row < tableModel.getRowCount(); row++) {
 				String name = tableModel.getValueAt(row, 0).toString();
 				String total = tableModel.getValueAt(row, 1).toString();
@@ -13922,32 +13947,53 @@ public class Main extends JFrame {
 				String tableID = tableModel.getValueAt(row, 7).toString();
 				int id = Integer.parseInt(tableID);
 				// Ensure data integrity before writing
-				if (name.isEmpty() || total.isEmpty() || sold.isEmpty() || category.isEmpty() || price.isEmpty()
-						|| unitprice.isEmpty()) {
+				if (name.isEmpty() || category.isEmpty()) {
 					System.err.println("Skipping row due to missing values: " + name);
 					continue;
 				}
+				if (total.isEmpty())
+					total = "0";
+				if (sold.isEmpty())
+					sold = "0";
+				if (price.isEmpty())
+					price = "0";
+				if (unitprice.isEmpty())
+					unitprice = "0";
+
+				String sanitizedName = name.replace(",", "");
+				String sanitizedCategory = category.replace(",", "");
+
 				if (merchandiseMap.containsKey(id)) {
 					Merchandise existing = merchandiseMap.get(id);
-					if (!existing.getName().equals(name)) {
-						nameChanges.put(existing.getName(), name); // Track name change
-					}
-				} else {
-					newMerch.add(new Merchandise(name, Integer.parseInt(total), Integer.parseInt(sold), category,
-							Double.parseDouble(price), id, Double.parseDouble(unitprice)));
-				}
+					String newName = existing.getName().replace(",", "");
+					if (!newName.equals(name))
+						nameChanges.put(newName, name); // Track name change
+				} else
+					newMerch.add(new Merchandise(sanitizedName, Integer.parseInt(total), Integer.parseInt(sold),
+							sanitizedCategory, Double.parseDouble(price), id, Double.parseDouble(unitprice)));
 
-				writer.println(String.join(",", name, total, sold, category, price, id + "", unitprice));
+				// Build CSV line safely
+				writer.print(sanitizedName + ",");
+				writer.print(total + ",");
+				writer.print(sold + ",");
+				writer.print(sanitizedCategory + ",");
+				writer.print(price + ",");
+				writer.print(id + ",");
+				writer.println(unitprice);
 			}
 		} catch (IOException e1) {
 			writeError(e1);
-			return; // Stop execution if writing fails
+			throw new RuntimeException("Save failed", e1); // Prevent silent failure
 		}
 		// Safely replace the file only if writing was successful
-		if (merchFile.exists() && !merchFile.delete()) {
-			System.err.println("Failed to delete original file!");
-		} else if (!tempFile.renameTo(merchFile)) {
-			System.err.println("Failed to rename temp file!");
+		try {
+			if (merchFile.exists()) {
+				Files.delete(merchFile.toPath()); // More reliable deletion
+			}
+			Files.move(tempFile.toPath(), merchFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
+		} catch (IOException finalEx) {
+			writeError(finalEx);
+			throw new RuntimeException("File replacement failed", finalEx);
 		}
 
 		if (!nameChanges.isEmpty()) {
@@ -14087,9 +14133,11 @@ public class Main extends JFrame {
 		dialog.setLocationRelativeTo(this);
 		overlay.showOverlay();
 
-		// Create a table model and table
-		DefaultTableModel tableModel = new DefaultTableModel(new String[] { "ITEM", "TOTAL", getLocalizedMessage("AGG"),
-				getLocalizedMessage("DATE"), getLocalizedMessage("DELETE") }, 0) {
+		ModernTabbedPane tabbedPane = new ModernTabbedPane();
+
+		// EXISTED TABLE
+		DefaultTableModel existedModel = new DefaultTableModel(new String[] { "ITEM", "TOTAL",
+				getLocalizedMessage("AGG"), getLocalizedMessage("DATE"), getLocalizedMessage("DELETE") }, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return column != 1;
@@ -14109,9 +14157,9 @@ public class Main extends JFrame {
 				}
 			}
 		};
-		tableModel.addRow(new Object[] { "", 0, 0, new Date(), "X" });
+		existedModel.addRow(new Object[] { "", 0, 0, new Date(), "X" });
 
-		JTable stockTable = new JTable(tableModel) {
+		JTable stockTable = new JTable(existedModel) {
 			@Override
 			public boolean editCellAt(int row, int column, EventObject e) {
 				boolean result = super.editCellAt(row, column, e);
@@ -14258,57 +14306,6 @@ public class Main extends JFrame {
 		header.setReorderingAllowed(false); // Prevent column reordering
 		header.setResizingAllowed(false); // Prevent column resizing
 
-		// Key listener for ESC key to close the dialog
-		InputMap inputMap = dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = dialog.getRootPane().getActionMap();
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "closeDialog");
-		actionMap.put("closeDialog", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dialog.dispose();
-				overlay.hideOverlay();
-				int qty = 0;
-				boolean title = false;
-				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					String name = tableModel.getValueAt(row, 0) != null ? tableModel.getValueAt(row, 0).toString() : "";
-					int quantity = tableModel.getValueAt(row, 2) != null
-							? Integer.parseInt(tableModel.getValueAt(row, 2).toString())
-							: 0;
-					// Ensure data integrity before writing
-					if (!name.isEmpty())
-						title = true;
-					qty += quantity;
-				}
-				if (title && qty > 0) {
-					saveAddedStock(tableModel);
-					saveDateAddedStock(tableModel);
-				}
-			}
-		});
-		dialog.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosing(WindowEvent we) {
-				overlay.hideOverlay();
-				int qty = 0;
-				boolean title = false;
-				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					String name = tableModel.getValueAt(row, 0) != null ? tableModel.getValueAt(row, 0).toString() : "";
-					int quantity = tableModel.getValueAt(row, 2) != null
-							? Integer.parseInt(tableModel.getValueAt(row, 2).toString())
-							: 0;
-					// Ensure data integrity before writing
-					if (!name.isEmpty())
-						title = true;
-					qty += quantity;
-				}
-				if (title && qty > 0) {
-					saveAddedStock(tableModel);
-					saveDateAddedStock(tableModel);
-				}
-			}
-		});
-
 		// BOTTOM PANEL
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 		JLabel legend = new JLabel(
@@ -14318,11 +14315,11 @@ public class Main extends JFrame {
 		JButton addRowButton = new JButton(getLocalizedMessage("ADD") + " ITEM");
 		addRowButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		addRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		addRowButton.addActionListener(_ -> tableModel.addRow(new Object[] { "", 0, 0, new Date(), "X" }));
+		addRowButton.addActionListener(_ -> existedModel.addRow(new Object[] { "", 0, 0, new Date(), "X" }));
 		JButton clearTable = new JButton(getLocalizedMessage("CLEAR"));
 		clearTable.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		clearTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		clearTable.addActionListener(_ -> tableModel.setRowCount(0));
+		clearTable.addActionListener(_ -> existedModel.setRowCount(0));
 		buttonsP.add(addRowButton);
 		buttonsP.add(clearTable);
 		// Add Delete button
@@ -14334,17 +14331,235 @@ public class Main extends JFrame {
 				((DefaultTableModel) table.getModel()).removeRow(row);
 			}
 		};
-		new ButtonColumn(stockTable, deleteAction, 4); // Column index 5 for "Action"
+		new ButtonColumn(stockTable, deleteAction, 4);
 
 		bottomPanel.add(legend, BorderLayout.CENTER);
 		bottomPanel.add(buttonsP, BorderLayout.SOUTH);
 
-		// Add the scroll pane to the dialog
-		dialog.add(scrollPane, BorderLayout.CENTER);
-		dialog.add(bottomPanel, BorderLayout.SOUTH);
+		// new item table
+		JPanel existingItemsPanel = new JPanel(new BorderLayout());
+		existingItemsPanel.add(scrollPane, BorderLayout.CENTER);
+		existingItemsPanel.add(bottomPanel, BorderLayout.SOUTH);
+		existingItemsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		tabbedPane.addTab(getLocalizedMessage("EXISTED"), existingItemsPanel);
 
+		DefaultTableModel newItemTableModel = new DefaultTableModel(
+				new String[] { getLocalizedMessage("NAME"), "TOTAL", getLocalizedMessage("UNIT_PRICE"),
+						getLocalizedMessage("PRICE"), getLocalizedMessage("CATEGORY"), getLocalizedMessage("DELETE") },
+				0) {
+
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				switch (columnIndex) {
+				case 1:
+					return Integer.class;
+				case 2:
+				case 3:
+					return Double.class;
+				case 5:
+					return String.class;
+				default:
+					return String.class;
+				}
+			}
+		};
+		newItemTableModel.addRow(new Object[] { "", 0, 0.0, 0.0, "", "X" });
+		JTable newItemTable = new JTable(newItemTableModel);
+		stockTable.setFont(new Font("Arial", Font.PLAIN, 16));
+		newItemTable.setRowHeight(30);
+		newItemTable.setShowGrid(true);
+		newItemTable.setIntercellSpacing(new Dimension(0, 0));
+		newItemTable.setDefaultRenderer(Object.class, centerRenderer);
+		header = newItemTable.getTableHeader();
+		header.setFont(new Font("Arial", Font.BOLD, 18));
+		header.setBackground(new Color(220, 220, 220)); // Light gray background for header
+		header.setForeground(Color.DARK_GRAY); // Dark gray text for header
+		header.setReorderingAllowed(false); // Prevent column reordering
+		header.setResizingAllowed(false); // Prevent column resizing
+
+		for (int i = 0; i < 6; i++)
+			newItemTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
+		JScrollPane newItemScrollPane = new JScrollPane(newItemTable);
+
+		JPanel newItemBottomPanel = new JPanel(new FlowLayout());
+		JButton addNewItemRowButton = new JButton(getLocalizedMessage("NEW"));
+		addNewItemRowButton.addActionListener(e -> newItemTableModel.addRow(new Object[] { "", 0, 0.0, 0.0, "", "X" }));
+		addNewItemRowButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		addNewItemRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		JButton clearNewTable = new JButton(getLocalizedMessage("CLEAR"));
+		clearNewTable.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		clearNewTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		clearNewTable.addActionListener(_ -> newItemTableModel.setRowCount(0));
+		newItemBottomPanel.add(addNewItemRowButton);
+		newItemBottomPanel.add(clearNewTable);
+
+		// Delete button for new items
+		javax.swing.Action deleteNewItemAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int row = Integer.parseInt(e.getActionCommand());
+				newItemTableModel.removeRow(row);
+			}
+		};
+		new ButtonColumn(newItemTable, deleteNewItemAction, 5);
+
+		JPanel newItemPanel = new JPanel(new BorderLayout());
+		newItemPanel.add(newItemScrollPane, BorderLayout.CENTER);
+		newItemPanel.add(newItemBottomPanel, BorderLayout.SOUTH);
+		newItemPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		tabbedPane.addTab(getLocalizedMessage("ADD") + " ITEM", newItemPanel);
+
+		// Key listener for ESC key to close the dialog
+		InputMap inputMap = dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = dialog.getRootPane().getActionMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "closeDialog");
+		actionMap.put("closeDdialog", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+				overlay.hideOverlay();
+			}
+		});
+		dialog.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent we) {
+				dialog.dispose();
+				overlay.hideOverlay();
+			}
+		});
+
+		dialog.add(tabbedPane, BorderLayout.CENTER);
+
+		JButton saveA = new JButton(getLocalizedMessage("SAVE"));
+		saveA.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		saveA.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		saveA.addActionListener(_ -> {
+			if (addAndSaveMerch(existedModel, newItemTableModel)) {
+				dialog.dispose();
+				overlay.hideOverlay();
+
+			}
+		});
+		dialog.add(saveA, BorderLayout.SOUTH);
 		// Show the dialog
 		dialog.setVisible(true);
+	}
+
+	/* Save the added value for the existed item and the new item */
+	private boolean addAndSaveMerch(DefaultTableModel existedModel, DefaultTableModel newItemTableModel) {
+		int qty = 0, merchSize = merchandise.size();
+		boolean title = false;
+		for (int row = 0; row < existedModel.getRowCount(); row++) {
+			String name = existedModel.getValueAt(row, 0) != null ? existedModel.getValueAt(row, 0).toString() : "";
+			int quantity = existedModel.getValueAt(row, 2) != null
+					? Integer.parseInt(existedModel.getValueAt(row, 2).toString())
+					: 0;
+			// Ensure data integrity before writing
+			if (!name.isEmpty())
+				title = true;
+			qty += quantity;
+		}
+
+		if (title && qty > 0) {
+			saveAddedStock(existedModel);
+			saveDateAddedStock(existedModel);
+			existedModel.setRowCount(0);
+			Toast.show(this, Toast.Type.SUCCESS, getLocalizedMessage("EXISTED") + " " + getLocalizedMessage("TABLE")
+					+ " " + getLocalizedMessage("SAVE_A"), Intro.notOption);
+		}
+		// Process new items
+		int newID = 1;
+		List<String> merchNames = new ArrayList<String>();
+		for (Merchandise merch : merchandise) {
+			if (merch.getID() > newID)
+				newID = merch.getID();
+			merchNames.add(merch.getName().toLowerCase());
+		}
+
+		for (int row = 0; row < newItemTableModel.getRowCount(); row++) {
+			String name = (String) newItemTableModel.getValueAt(row, 0);
+			Integer total = (Integer) newItemTableModel.getValueAt(row, 1);
+			Double costPrice = (Double) newItemTableModel.getValueAt(row, 2);
+			Double sellPrice = (Double) newItemTableModel.getValueAt(row, 3);
+			String category = (String) newItemTableModel.getValueAt(row, 4);
+			int id = newID++ + 1;
+			if (name != null && !name.trim().isEmpty() && total != null && total > 0 && costPrice != null
+					&& costPrice > 0 && sellPrice != null && sellPrice > 0
+					&& !merchNames.contains(name.toLowerCase())) {
+				Merchandise newItem = new Merchandise(name, total, 0, category, sellPrice, id, costPrice);
+				merchandise.add(newItem);
+			} else if (merchNames.contains(name.toLowerCase())) {
+				Toast.show(this, Toast.Type.ERROR, getLocalizedMessage("EXISTED") + " (" + name.toUpperCase() + ")",
+						Intro.notOption);
+				return false;
+			}
+		}
+		if (merchSize < merchandise.size()) {
+			// add to stock file
+			File extraF = new File(dataFolder + "\\Stock");
+			extraF.mkdir();
+			File merchFile = new File(extraF, "stock.dll");
+
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(merchFile, true))) {
+				for (Merchandise merch : merchandise.subList(merchSize, merchandise.size())) {
+					writer.write(
+							merch.getName() + "," + merch.getTotal() + "," + merch.getSold() + "," + merch.getCategory()
+									+ "," + merch.getPrice() + "," + merch.getID() + "," + merch.getUnitPrice());
+					writer.newLine();
+				}
+			} catch (IOException e1) {
+				writeError(e1);
+			}
+			// add to dates file
+			File dates = new File(extraF, "dates.dll");
+			Map<String, Map<String, Integer>> salesMap = new LinkedHashMap<>();
+			// Read existing index
+			try (BufferedReader reader = new BufferedReader(new FileReader(dates))) {
+				reader.readLine();
+				String line;
+				while ((line = reader.readLine()) != null) {
+					String[] parts = line.split(",");
+					String item = parts[0];
+					Map<String, Integer> dateQtyMap = new LinkedHashMap<>();
+					for (int i = 1; i < parts.length; i++) {
+						String[] dateQty = parts[i].split(":");
+						if (dateQty.length == 2) {
+							dateQtyMap.put(dateQty[0], Integer.parseInt(dateQty[1]));
+						}
+					}
+					salesMap.put(item, dateQtyMap);
+				}
+			} catch (IOException e2) {
+				writeError(e2);
+			}
+			// Write updated index to file
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(dates))) {
+				writer.write("ITEM,DATE:QUANTITY");
+				writer.newLine();
+				for (Map.Entry<String, Map<String, Integer>> entry : salesMap.entrySet()) {
+					StringBuilder line = new StringBuilder(entry.getKey());
+					for (Map.Entry<String, Integer> dateEntry : entry.getValue().entrySet()) {
+						line.append(",").append(dateEntry.getKey()).append(":").append(dateEntry.getValue());
+					}
+					writer.write(line.toString());
+					writer.newLine();
+				}
+				for (Merchandise merch : merchandise.subList(merchSize, merchandise.size())) {
+					writer.write(merch.getName() + "," + currentDate.getToday() + ":" + merch.getTotal());
+					writer.newLine();
+				}
+			} catch (IOException e1) {
+				writeError(e1);
+			}
+			newItemTableModel.setRowCount(0);
+			Toast.show(this, Toast.Type.SUCCESS, getLocalizedMessage("NEW") + " " + getLocalizedMessage("TABLE") + " "
+					+ getLocalizedMessage("SAVE_A"), Intro.notOption);
+		} else if (!title || qty == 0) {
+			Toast.show(this, Toast.Type.ERROR, getLocalizedMessage("NO_DATA"), Intro.notOption);
+			return false;
+		}
+		return true;
 	}
 
 	/* Update the total for the stock file */
@@ -14497,6 +14712,25 @@ public class Main extends JFrame {
 		saveButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		saveButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		saveButton.addActionListener(_ -> {
+			Map<String, Integer> accumulatedQuantities = new HashMap<>();
+			for (DefaultTableModel model : invoiceModels) {
+				for (int row = 0; row < model.getRowCount(); row++) {
+					String item = model.getValueAt(row, 0) != null ? model.getValueAt(row, 0).toString() : "";
+					int quantity = model.getValueAt(row, 1) != null
+							? Integer.parseInt(model.getValueAt(row, 1).toString())
+							: 0;
+					accumulatedQuantities.put(item, accumulatedQuantities.getOrDefault(item, 0) + quantity);
+				}
+			}
+			for (String keys : accumulatedQuantities.keySet()) {
+				int value = accumulatedQuantities.get(keys);
+				int qty = searchQty(keys);
+				if (value > qty) {
+					Toast.show(this, Toast.Type.ERROR,
+							"'" + keys.toUpperCase() + "' " + getLocalizedMessage("SALES_EXCCED"), Intro.notOption);
+					return;
+				}
+			}
 			try {
 				saveInvoices();// save current invoice
 				updateMerchandiseCSV(); // update the stock file
@@ -14666,23 +14900,49 @@ public class Main extends JFrame {
 			@Override
 			public Object getCellEditorValue() {
 				String text = ((JTextField) getComponent()).getText();
-				try {
-					return Integer.parseInt(text); // Return numeric value
-				} catch (NumberFormatException e) {
-					return 0; // Default to 0 for invalid input
+				if (TextEffect.isInteger(text)) {
+					int number = Integer.parseInt(text);
+					if (number <= 0)
+						number = 1;
+					return number;
 				}
+				return 1;
+			}
+		};
+		DefaultCellEditor doubleEditor = new DefaultCellEditor(new JTextField()) {
+			{
+				JTextField textField = (JTextField) getComponent();
+				// Ensure only numeric input
+				textField.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyTyped(KeyEvent e) {
+						char c = e.getKeyChar();
+						if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != '.') {
+							e.consume(); // Ignore non-numeric input
+						}
+					}
+				});
+			}
+
+			@Override
+			public Object getCellEditorValue() {
+				String text = ((JTextField) getComponent()).getText();
+				if (TextEffect.isDouble(text)) {
+					double number = Double.parseDouble(text);
+					if (number <= 0)
+						number = 1;
+					return number;
+				}
+				return 1;
 			}
 		};
 
 		column[1].setCellEditor(numericEditor);
-		column[2].setCellEditor(numericEditor);
+		column[2].setCellEditor(doubleEditor);
 
 		List<String> merchandiseNames = new ArrayList<String>();
 		for (int index = 0; index < merchandise.size(); index++)
-			if (conf[19].equals("false")) {
-				if (merchandise.get(index).getTotal() != merchandise.get(index).getSold())
-					merchandiseNames.add(merchandise.get(index).getName());
-			} else
+			if (merchandise.get(index).getTotal() != merchandise.get(index).getSold())
 				merchandiseNames.add(merchandise.get(index).getName());
 		Collections.sort(merchandiseNames);
 
@@ -14710,7 +14970,8 @@ public class Main extends JFrame {
 				Component editor = super.getTableCellEditorComponent(table, value, isSelected, row, column);
 				SwingUtilities.invokeLater(() -> {
 					combo.requestFocus();
-					combo.showPopup();
+					if (combo.isShowing())
+						combo.showPopup();
 				});
 				return editor;
 			}
@@ -15030,7 +15291,7 @@ public class Main extends JFrame {
 				String date = tableModel.getValueAt(row, 1) != null ? tableModel.getValueAt(row, 1).toString()
 						: new Date() + "";
 				String qtyS = tableModel.getValueAt(row, 2) != null ? tableModel.getValueAt(row, 2).toString() : "";
-				int qty = TextEffect.isNumeric(qtyS) ? Integer.parseInt(qtyS) : 0;
+				int qty = TextEffect.isInteger(qtyS) ? Integer.parseInt(qtyS) : 0;
 				DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss VV yyyy",
 						Locale.ENGLISH);
 				ZonedDateTime zonedDateTime = ZonedDateTime.parse(date, inputFormatter);
@@ -15152,10 +15413,7 @@ public class Main extends JFrame {
 		JTextField searchField = new JTextField();
 		for (Merchandise m : merchandise) {
 			int availableStock = m.getTotal() - m.getSold();
-			if (conf[19].equals("false")) {
-				if (availableStock > 0)
-					tableModel.addRow(new Object[] { m.getName(), availableStock, m.getUnitPrice(), m.getPrice() });
-			} else
+			if (availableStock > 0)
 				tableModel.addRow(new Object[] { m.getName(), availableStock, m.getUnitPrice(), m.getPrice() });
 		}
 
@@ -17329,25 +17587,9 @@ public class Main extends JFrame {
 
 	/* return the date sell with its qty for a given item */
 	private int searchQty(String targetItem) {
-		File extraF = new File(dataFolder + "\\Stock");
-		extraF.mkdir();
-		File salesData = new File(extraF, "stock.dll");
-
-		try (BufferedReader reader = new BufferedReader(new FileReader(salesData))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(",");
-				String item = parts[0];
-				if (item.equalsIgnoreCase(targetItem)) {
-					if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])) {
-						return (Integer.parseInt(parts[1]) - Integer.parseInt(parts[2]));
-					}
-					break;
-				}
-			}
-		} catch (IOException e) {
-			writeError(e);
-		}
+		for (int index = 0; index < merchandise.size(); index++)
+			if (targetItem.equalsIgnoreCase(merchandise.get(index).getName()))
+				return (merchandise.get(index).getTotal() - merchandise.get(index).getSold());
 		return -1;
 	}
 
@@ -18339,7 +18581,7 @@ public class Main extends JFrame {
 					String[] parts = line.split(",");
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[2])) {
+						if (TextEffect.isInteger(parts[2])) {
 							String name = parts[0];
 							LocalDate date = LocalDate.parse(parts[1], formatter);
 							int salary = Integer.parseInt(parts[2]);
@@ -18940,7 +19182,7 @@ public class Main extends JFrame {
 		return data;
 	}
 
-	// Save the licensia days
+	// Save the FREE DAYS days
 	private void saveCsvFile(String type) {
 		File extraF = new File(dataFolder + "\\" + TextEffect.capitalizeString(getLocalizedMessage("EMPLOYEE")));
 		extraF.mkdir();
@@ -20672,7 +20914,7 @@ public class Main extends JFrame {
 						continue;
 					}
 					String[] parts = line.split(",");
-					if (TextEffect.isNumeric(parts[2]))
+					if (TextEffect.isInteger(parts[2]))
 						if (parts[1].equalsIgnoreCase("m"))
 							bills.add(new RecurringBill(parts[0], LocalDate.now(), RecurrenceType.MONTHLY,
 									Integer.valueOf(parts[2]), null));
@@ -20767,7 +21009,7 @@ public class Main extends JFrame {
 					String[] parts = line.split(",");
 					String lang = langIndex == 0 ? "es" : langIndex == 1 ? "pt" : langIndex == 2 ? "en" : "fr";
 
-					if (TextEffect.isNumeric(parts[2])) {
+					if (TextEffect.isInteger(parts[2])) {
 						int dayOrDate = Integer.parseInt(parts[2]);
 						if (parts[1].equalsIgnoreCase("m")) {
 							monthlyTableModel.addRow(new Object[] { parts[0], dayOrDate, "X" });
@@ -20982,7 +21224,7 @@ public class Main extends JFrame {
 
 				// Determine the numeric index for the day selected in the ComboBox
 				int index = 1; // Default value (Monday)
-				if (TextEffect.isNumeric(day)) {
+				if (TextEffect.isInteger(day)) {
 					index = Integer.parseInt(day); // If the value is already numeric (e.g., 1 for Monday)
 				} else {
 					for (int i = 0; i < daysOfWeek.length; i++) {
@@ -21220,7 +21462,7 @@ public class Main extends JFrame {
 					}
 					String[] parts = line.split(",");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])) {
+						if (TextEffect.isInteger(parts[1]) && TextEffect.isInteger(parts[2])) {
 							HolidayType type = parts[3].equalsIgnoreCase("ISLAMIC") ? HolidayType.ISLAMIC
 									: HolidayType.WORLDWIDE;
 							tableModel
@@ -21434,7 +21676,7 @@ public class Main extends JFrame {
 					}
 					String[] parts = line.split(",");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])) {
+						if (TextEffect.isInteger(parts[1]) && TextEffect.isInteger(parts[2])) {
 							int day = Integer.parseInt(parts[1]);
 							int month = Integer.parseInt(parts[2]);
 							HolidayType type = parts[3].equalsIgnoreCase("ISLAMIC") ? HolidayType.ISLAMIC
@@ -21591,8 +21833,8 @@ public class Main extends JFrame {
 					}
 					String[] parts = line.split(",");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])
-								&& TextEffect.isNumeric(parts[3])) {
+						if (TextEffect.isInteger(parts[1]) && TextEffect.isInteger(parts[2])
+								&& TextEffect.isInteger(parts[3])) {
 							tableModel.addRow(new Object[] { parts[0], parts[1], parts[2], parts[3], "X" });
 						}
 				}
@@ -21813,8 +22055,8 @@ public class Main extends JFrame {
 					}
 					String[] parts = line.split(",");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])
-								&& TextEffect.isNumeric(parts[3])) {
+						if (TextEffect.isInteger(parts[1]) && TextEffect.isInteger(parts[2])
+								&& TextEffect.isInteger(parts[3])) {
 							int day = Integer.parseInt(parts[1]);
 							int month = Integer.parseInt(parts[2]);
 							int year = Integer.parseInt(parts[3]);

@@ -40,7 +40,7 @@ public class DataCalc {
 					"ERROR" + e);
 		}
 		while (i < totalMes.size()) {
-			if (TextEffect.isNumeric(totalMes.get(i)))
+			if (TextEffect.isInteger(totalMes.get(i)))
 				counter += Integer.valueOf(totalMes.get(i));
 			i++;
 		}
@@ -65,7 +65,7 @@ public class DataCalc {
 					"ERROR" + e);
 		}
 		while (i < totalMes.size()) {
-			if (TextEffect.isNumeric(totalMes.get(i))) {
+			if (TextEffect.isInteger(totalMes.get(i))) {
 				counter += Integer.valueOf(totalMes.get(i));
 				nbOfDays++;
 			}
@@ -94,7 +94,7 @@ public class DataCalc {
 		}
 		while (i < data.size()) {
 			if (dayName(selectDate, 0).equals(dayName(date2, 0)))
-				if (TextEffect.isNumeric(data.get(i))) {
+				if (TextEffect.isInteger(data.get(i))) {
 					counter += Integer.valueOf(data.get(i));
 					nbOfDays++;
 				}
@@ -126,7 +126,7 @@ public class DataCalc {
 		ArrayList<Integer> dayValue = new ArrayList<>();
 		while (i < data.size()) {
 			if (day.equalsIgnoreCase(dayName(date2, 2)))
-				if (TextEffect.isNumeric(data.get(i))) {
+				if (TextEffect.isInteger(data.get(i))) {
 					dayValue.add(Integer.valueOf(data.get(i)));
 				}
 			i++;
@@ -173,7 +173,7 @@ public class DataCalc {
 		}
 		while (i < data.size()) {
 			if (day.equalsIgnoreCase(dayName(date2, 2)))
-				if (TextEffect.isNumeric(data.get(i))) {
+				if (TextEffect.isInteger(data.get(i))) {
 					counter += Integer.valueOf(data.get(i));
 					nbOfDays++;
 				}
@@ -212,7 +212,7 @@ public class DataCalc {
 				break;
 			}
 		}
-		return !TextEffect.isNumeric(valueY[numero]) ? -1 : Integer.valueOf(valueY[numero]);
+		return !TextEffect.isInteger(valueY[numero]) ? -1 : Integer.valueOf(valueY[numero]);
 	}
 
 	// return the max of the year
@@ -236,7 +236,7 @@ public class DataCalc {
 			int avgTemp = 0;
 			int voidNumber = 0;
 			for (String element : data) {
-				if (TextEffect.isNumeric(element))
+				if (TextEffect.isInteger(element))
 					avgTemp += Integer.valueOf(element);
 				else
 					voidNumber++;
@@ -245,7 +245,7 @@ public class DataCalc {
 			int i = 0;
 			int[] finalData = new int[data.size()];
 			while (i < data.size()) {
-				if (TextEffect.isNumeric(data.get(i)))
+				if (TextEffect.isInteger(data.get(i)))
 					finalData[i] = Integer.valueOf(data.get(i));
 				else
 					finalData[i] = avgTemp;
@@ -285,7 +285,7 @@ public class DataCalc {
 		}
 		while (i < maxDays && i < totalMes.size()) {
 			if (day.equalsIgnoreCase(dayName(date2, 2)))
-				if (TextEffect.isNumeric(totalMes.get(i))) {
+				if (TextEffect.isInteger(totalMes.get(i))) {
 					counter += Integer.valueOf(totalMes.get(i));
 					nbOfDays++;
 				}
@@ -320,7 +320,7 @@ public class DataCalc {
 		int count = 0;
 		for (int i = index; i < index + tempDate.maxDays(); i++) {
 			if (i < totalMes.size())
-				if (TextEffect.isNumeric(totalMes.get(i)))
+				if (TextEffect.isInteger(totalMes.get(i)))
 					valuesMes[count] = Integer.valueOf(totalMes.get(i));
 				else
 					valuesMes[count] = averageM;
@@ -358,7 +358,7 @@ public class DataCalc {
 					"ERROR" + e);
 		}
 		for (int i = index; i < index + dateM.maxDays(); i++) {
-			if (i < data.size() && TextEffect.isNumeric(data.get(i))) {
+			if (i < data.size() && TextEffect.isInteger(data.get(i))) {
 				returned[0] += Integer.valueOf(data.get(i));
 				returned[1]++;
 			}
@@ -388,7 +388,7 @@ public class DataCalc {
 
 		for (int i = index; i < index + dateM.maxDays(); i++) {
 			if (i < totalMes.size())
-				if (TextEffect.isNumeric(totalMes.get(i)))
+				if (TextEffect.isInteger(totalMes.get(i)))
 					sellValue.add(Integer.valueOf(totalMes.get(i)));
 				else if (totalMes.get(i).isBlank())
 					sellValue.add(null);

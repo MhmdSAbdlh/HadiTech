@@ -895,17 +895,10 @@ public class FaturaR extends JFrame {
 		}
 		try (BufferedReader dataOpened = new BufferedReader(new FileReader(merchFile))) {
 			String line;
-
 			while ((line = dataOpened.readLine()) != null) {
 				String[] row = line.split(",");
-
-				// Check row length before processing
-				if (row.length < 6 || !TextEffect.isNumeric(row[1]) || !TextEffect.isNumeric(row[2])
-						|| !TextEffect.isNumeric(row[4]) || !TextEffect.isNumeric(row[5])) {
-					System.err.println("Skipping invalid row: " + line);
-					continue;
-				}
-				list.add(row[0].toLowerCase());
+				if (row.length > 0)
+					list.add(row[0].toLowerCase());
 			}
 		} catch (Exception e) {
 			writeError(e);
@@ -1184,13 +1177,13 @@ public class FaturaR extends JFrame {
 		totalFatura = 0;
 		for (int i = 0; i < 10; i++) // if input wrong make it 0
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
-					&& TextEffect.isNumeric(details[i][0].getText()) && TextEffect.isNumeric(details[i][2].getText())) {
+					&& TextEffect.isInteger(details[i][0].getText()) && TextEffect.isInteger(details[i][2].getText())) {
 				detailsR[i].setText(
 						Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
 				totalFatura += Integer.valueOf(detailsR[i].getText());
 			}
 		for (int i = 0; i < 7; i++)// if input wrong make it 0
-			if (!TextEffect.isNumeric(trocoCT[i].getText()))
+			if (!TextEffect.isInteger(trocoCT[i].getText()))
 				trocoCT[i].setText("0");
 		total.setText("R$ " + totalFatura);// total for the invoice
 		totalCV = Integer.valueOf(trocoCT[0].getText()) + Integer.valueOf(trocoCT[1].getText()) * 2
@@ -1808,7 +1801,7 @@ public class FaturaR extends JFrame {
 			FileWriter savedF = new FileWriter(newFile);
 			int i = 0;
 			while (i < 120) {// Ventas + total
-				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !TextEffect.isNumeric(numbers[i]))
+				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !TextEffect.isInteger(numbers[i]))
 						&& Integer.valueOf(temp) != 0 && !totalC.getText().isBlank()) {
 					savedF.write(temp + System.lineSeparator());
 					temp = "0";
@@ -1835,7 +1828,7 @@ public class FaturaR extends JFrame {
 				savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
 				i++;
 			}
-			int existedPix = TextEffect.isNumeric(numbers[i]) ? (Integer.valueOf(numbers[i]) + pixValue) : pixValue;
+			int existedPix = TextEffect.isInteger(numbers[i]) ? (Integer.valueOf(numbers[i]) + pixValue) : pixValue;
 			savedF.write(existedPix + System.lineSeparator());// pix save
 			savedF.close();
 		} catch (Exception e) {
@@ -1868,7 +1861,7 @@ public class FaturaR extends JFrame {
 				int i = 0;
 				while (i < 100) {// Ventas + total
 					if ((moreCasesNumbers[i].isBlank() || Integer.valueOf(moreCasesNumbers[i]) == 0
-							|| !TextEffect.isNumeric(moreCasesNumbers[i])) && Integer.valueOf(temp) != 0
+							|| !TextEffect.isInteger(moreCasesNumbers[i])) && Integer.valueOf(temp) != 0
 							&& !totalC.getText().isBlank()) {
 						savedF.write(temp + System.lineSeparator());
 						temp = "0";
@@ -1920,8 +1913,8 @@ public class FaturaR extends JFrame {
 				totalFatura = 0;
 				for (int i = 0; i < 10; i++) {// if input wrong make it 0
 					if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
-							&& TextEffect.isNumeric(details[i][0].getText())
-							&& TextEffect.isNumeric(details[i][2].getText())) {
+							&& TextEffect.isInteger(details[i][0].getText())
+							&& TextEffect.isInteger(details[i][2].getText())) {
 						detailsR[i].setText(
 								Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText())
 										+ "");

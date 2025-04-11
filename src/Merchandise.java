@@ -1,6 +1,5 @@
 package haditech;
 
-//Helper class for merchandise data
 public class Merchandise {
 	private String name, category;
 	private int total, sold, id;

@@ -153,7 +153,7 @@ import raven.textfield.PasswordField;
 import raven.textfield.TextField;
 
 public class Intro extends JFrame {
-	private final String appVersion = "1.1";
+	private final String appVersion = "1.2";
 	private int showStatus = 0;
 	static Font myFont = new Font("Tahoma", Font.BOLD, 21);
 	static Font myFontS = new Font("Tahoma", Font.BOLD, 17);
@@ -461,7 +461,7 @@ public class Intro extends JFrame {
 		UIManager.put("ToolTip.border", new LineBorder(fg, 1));
 
 		/* Notification */
-		if (conf[25] == null || !TextEffect.isNumeric(conf[25])) {
+		if (conf[25] == null || !TextEffect.isInteger(conf[25])) {
 			toastTime = 3 * 1000;
 		} else {
 			if (Integer.valueOf(conf[25]) < 1)
@@ -1919,8 +1919,8 @@ public class Intro extends JFrame {
 					}
 					String[] parts = line.split(",");
 					if (parts.length == 4)
-						if (TextEffect.isNumeric(parts[1]) && TextEffect.isNumeric(parts[2])
-								&& TextEffect.isNumeric(parts[3])) {
+						if (TextEffect.isInteger(parts[1]) && TextEffect.isInteger(parts[2])
+								&& TextEffect.isInteger(parts[3])) {
 							int day = Integer.parseInt(parts[1]);
 							int month = Integer.parseInt(parts[2]);
 							int year = Integer.parseInt(parts[3]);
@@ -2187,7 +2187,7 @@ public class Intro extends JFrame {
 		if (conf[2] == null || conf[2].equalsIgnoreCase("null")
 				|| (!conf[2].equalsIgnoreCase("true") && !conf[2].equalsIgnoreCase("false")))
 			conf[2] = "false";
-		if (conf[3] == null || conf[3].equalsIgnoreCase("null") || (!TextEffect.isNumeric(conf[3])))
+		if (conf[3] == null || conf[3].equalsIgnoreCase("null") || (!TextEffect.isInteger(conf[3])))
 			conf[3] = "10";
 		if (conf[4] == null || conf[4].equalsIgnoreCase("null")
 				|| (!conf[4].equalsIgnoreCase("true") && !conf[4].equalsIgnoreCase("false")))
@@ -2257,7 +2257,7 @@ public class Intro extends JFrame {
 						&& !conf[24].equalsIgnoreCase("4") && !conf[24].equalsIgnoreCase("5")
 						&& !conf[24].equalsIgnoreCase("6")))
 			conf[24] = "0";
-		if (conf[25] == null || conf[5].equalsIgnoreCase("null") || (!TextEffect.isNumeric(conf[25])))
+		if (conf[25] == null || conf[5].equalsIgnoreCase("null") || (!TextEffect.isInteger(conf[25])))
 			conf[25] = "3";
 		if (conf[26] == null || conf[26].equalsIgnoreCase("null")
 				|| (!conf[26].equalsIgnoreCase("true") && !conf[26].equalsIgnoreCase("false")))
