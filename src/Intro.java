@@ -153,7 +153,7 @@ import raven.textfield.PasswordField;
 import raven.textfield.TextField;
 
 public class Intro extends JFrame {
-	private final String appVersion = "1.2";
+	private final String appVersion = "1.3";
 	private int showStatus = 0;
 	static Font myFont = new Font("Tahoma", Font.BOLD, 21);
 	static Font myFontS = new Font("Tahoma", Font.BOLD, 17);

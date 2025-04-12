@@ -144,6 +144,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -14384,7 +14385,7 @@ public class Main extends JFrame {
 
 		JPanel newItemBottomPanel = new JPanel(new FlowLayout());
 		JButton addNewItemRowButton = new JButton(getLocalizedMessage("NEW"));
-		addNewItemRowButton.addActionListener(e -> newItemTableModel.addRow(new Object[] { "", 0, 0.0, 0.0, "", "X" }));
+		addNewItemRowButton.addActionListener(_ -> newItemTableModel.addRow(new Object[] { "", 0, 0.0, 0.0, "", "X" }));
 		addNewItemRowButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		addNewItemRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		JButton clearNewTable = new JButton(getLocalizedMessage("CLEAR"));
@@ -14801,16 +14802,16 @@ public class Main extends JFrame {
 				BorderFactory.createCompoundBorder(new LineBorder(fg, 1), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
 		// Create a new table model for the invoice
-		String[] columnNames = { "ITEM", getLocalizedMessage("QUANTITY"), getLocalizedMessage("PRICE"),
+		String[] columnNames = { "ITEM", getLocalizedMessage("QUANTITY"), getLocalizedMessage("PRICE"), "TOTAL",
 				getLocalizedMessage("DELETE") };
-		String[] columnOldNames = { "ITEM", getLocalizedMessage("QUANTITY"), getLocalizedMessage("PRICE") };
+		String[] columnOldNames = { "ITEM", getLocalizedMessage("QUANTITY"), getLocalizedMessage("PRICE"), "TOTAL" };
 		DefaultTableModel salesModel = new DefaultTableModel(date.equals(currentDate) ? columnNames : columnOldNames,
 				0);
 
 		JTable salesTable = new JTable(salesModel) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
-				return date.equals(currentDate) ? true : false; // Disable editing for all cells
+				return date.equals(currentDate) ? column != 3 : false; // Disable editing for all cells
 			}
 
 			@Override
@@ -14832,6 +14833,7 @@ public class Main extends JFrame {
 				}
 				return result;
 			}
+
 		};
 		invoiceModels.add(salesModel);
 
@@ -14858,17 +14860,16 @@ public class Main extends JFrame {
 
 		if (addDefaultRow && salesModel.getRowCount() == 0)
 			if (date.equals(currentDate))
-				salesModel.addRow(new Object[] { "", 1, 0, "X" });
+				salesModel.addRow(new Object[] { "", 1, 0, 0, "X" });
 
 		// Center align table cells
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++)
 			salesTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-		}
 
-		TableColumn column[] = new TableColumn[3];
-		for (int i = 0; i < 3; i++) {
+		TableColumn column[] = new TableColumn[4];
+		for (int i = 0; i < 4; i++) {
 			column[i] = salesTable.getColumnModel().getColumn(i);
 			if (i > 0) {
 				column[i].setPreferredWidth(150);
@@ -14877,9 +14878,9 @@ public class Main extends JFrame {
 			}
 		}
 		if (date.equals(currentDate)) {
-			salesTable.getColumnModel().getColumn(3).setPreferredWidth(150);
-			salesTable.getColumnModel().getColumn(3).setMinWidth(150);
-			salesTable.getColumnModel().getColumn(3).setMaxWidth(150);
+			salesTable.getColumnModel().getColumn(4).setPreferredWidth(150);
+			salesTable.getColumnModel().getColumn(4).setMinWidth(150);
+			salesTable.getColumnModel().getColumn(4).setMaxWidth(150);
 		}
 		// Custom editor for numeric columns
 		DefaultCellEditor numericEditor = new DefaultCellEditor(new JTextField()) {
@@ -15014,7 +15015,7 @@ public class Main extends JFrame {
 			}
 		};
 		if (date.equals(currentDate))
-			new ButtonColumn(salesTable, deleteAction, 3); // Column index 3 for "Action"
+			new ButtonColumn(salesTable, deleteAction, 4); // Column index 3 for "Action"
 
 		// Buttons to save or add rows
 		JPanel tabPanel = new JPanel(new BorderLayout());
@@ -15022,7 +15023,7 @@ public class Main extends JFrame {
 		JButton addRowButton = new JButton(getLocalizedMessage("ADD") + " ITEM");
 		addRowButton.setFont(Intro.myFontS);
 		addRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		addRowButton.addActionListener(_ -> salesModel.addRow(new Object[] { "", 1, 0, "X" }));
+		addRowButton.addActionListener(_ -> salesModel.addRow(new Object[] { "", 1, 0, 0, "X" }));
 		JButton closeButton = new JButton(getLocalizedMessage("DELETE") + " " + getLocalizedMessage("INVOICE"));
 		closeButton.setFont(Intro.myFontS);
 		closeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -15075,11 +15076,28 @@ public class Main extends JFrame {
 		tabPanel.add(northPanel, BorderLayout.CENTER);
 
 		updateTotal(totalLabel); // Initialize total
-		salesModel.addTableModelListener(_ -> updateTotal(totalLabel));
+		salesModel.addTableModelListener(e -> {
+			if (e.getType() == TableModelEvent.UPDATE) {
+				int row = e.getFirstRow();
+				int col = e.getColumn();
+				// Update total when Qty (col 1) or Price (col 2) changes
+				if (col == 1 || col == 2) {
+					Object qtyObj = salesModel.getValueAt(row, 1);
+					Object priceObj = salesModel.getValueAt(row, 2);
+					if (qtyObj instanceof Number && priceObj instanceof Number) {
+						int qty = ((Number) qtyObj).intValue();
+						double price = ((Number) priceObj).doubleValue();
+						salesModel.setValueAt(TextEffect.roundedDouble(qty * price), row, 3);
+					}
+				}
+			}
+			updateTotal(totalLabel); // Update grand total
+		});
 
 		// Add the tab with a default name (e.g., "Invoice 1")
 		String tabTitle = getLocalizedMessage("INVOICE") + " " + (tabbedPane.getTabCount() + 1);
 		tabbedPane.addTab(tabTitle, tabPanel);
+
 	}
 
 	/* Add more qty to existed merchandise */
@@ -15717,10 +15735,10 @@ public class Main extends JFrame {
 				String line;
 				DefaultTableModel currentModel = null;
 				JComboBox<String> currentComboBox = null;
-				boolean IntroLine = true; // Skip the header line
+				boolean skipHeader = true; // Skip the header line
 				while ((line = reader.readLine()) != null) {
-					if (IntroLine) {
-						IntroLine = false;
+					if (skipHeader) {
+						skipHeader = false;
 						continue;
 					}
 					if (line.equals("---,---,---")) {
@@ -15734,19 +15752,24 @@ public class Main extends JFrame {
 							currentModel = invoiceModels.get(invoiceModels.size() - 1);
 							currentComboBox = paymentComboBoxes.get(invoiceModels.size() - 1);
 							currentComboBox.setSelectedItem(parts[1]); // Restore payment method
+
 						} else {
 							if (parts.length == 3) {
+								String itemName = parts[0];
+								int qty = TextEffect.isInteger(parts[1]) ? Integer.parseInt(parts[1]) : 0;
+								double price = TextEffect.isDouble(parts[2]) ? Double.parseDouble(parts[2]) : 0;
+								double total = TextEffect.roundedDouble(qty * price);
 								if (currentModel == null) {
-									// New invoice
 									addNewInvoiceTab(date, false);
 									currentModel = invoiceModels.get(invoiceModels.size() - 1);
 									currentComboBox = paymentComboBoxes.get(invoiceModels.size() - 1);
 								}
-								currentModel.addRow(new Object[] { parts[0], parts[1], parts[2] });
+								currentModel.addRow(new Object[] { itemName, qty, price, total });
 							}
 						}
 					}
 				}
+
 			} catch (IOException e) {
 				writeError(e);
 			}
@@ -17515,7 +17538,7 @@ public class Main extends JFrame {
 		for (Employee emp : employee)
 			empName.add(emp.getName());
 		for (int i = 0; i < invoiceModels.size(); i++) {
-			String sellerName = paymentComboBoxes.get(i).getSelectedItem().toString();
+			String sellerName = empName.size() == 0 ? "" : paymentComboBoxes.get(i).getSelectedItem().toString();
 			int total = 0;
 			for (int row = 0; row < invoiceModels.get(i).getRowCount(); row++) {
 				String item = invoiceModels.get(i).getValueAt(row, 0) != null
