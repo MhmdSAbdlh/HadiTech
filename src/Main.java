@@ -205,7 +205,6 @@ import mhmdsabdlh.component.SnowPanel.Shape;
 import mhmdsabdlh.component.OverlayPanel.OverlayFrame;
 import mhmdsabdlh.dialog.ModernDialog;
 import mhmdsabdlh.dialog.ModernDialog.IconType;
-import mhmdsabdlh.dialog.ModernInputDialog;
 import mhmdsabdlh.dialog.PasswordDialog;
 import mhmdsabdlh.images.BadgeIconGenerator;
 import mhmdsabdlh.images.IconWithText;
@@ -1169,6 +1168,7 @@ public class Main extends JFrame {
 		JMenuItem viewMerchandise = new JMenuItem(getLocalizedMessage("VIEW_STOCK"));
 		JMenuItem changeStock = new JMenuItem(getLocalizedMessage("CHANGE_STOCK"));
 		JMenuItem addStockDate = new JMenuItem(getLocalizedMessage("DATE_STOCK"));
+		JMenuItem stockSumm = new JMenuItem(getLocalizedMessage("STOCK_OVERVIEW"));
 		JMenu salesTrack = new JMenu(getLocalizedMessage("SALES_TRAKING"));
 		JMenuItem summaryItem = new JMenuItem(getLocalizedMessage("SUMMARY") + " ITEM");
 		JMenuItem itemByDates = new JMenuItem(getLocalizedMessage("SEARCH_STOCK"));
@@ -1211,6 +1211,10 @@ public class Main extends JFrame {
 			loadInvoices(currentDate);
 			invoiceTab(currentDate);
 		});
+		stockSumm.addActionListener(_ -> {
+			loadStockData();
+			stockSummary();
+		});
 		noSalesM.addActionListener(_ -> searchUnsellMechandise());
 		oldInvoices.addActionListener(_ -> viewOldInvoices());
 		summaryItem.addActionListener(_ -> merchandiseSummDialog());
@@ -1218,6 +1222,7 @@ public class Main extends JFrame {
 		merchandiseMenu.add(viewMerchandise);
 		merchandiseMenu.add(addStockDate);
 		merchandiseMenu.add(changeStock);
+		salesTrack.add(stockSumm);
 		salesTrack.add(summaryItem);
 		salesTrack.add(itemByDates);
 		salesTrack.add(viewAddedStockDate);
@@ -1649,6 +1654,7 @@ public class Main extends JFrame {
 		viewMerchandise.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(viewStockI.getImage(), 35, 35)));
 		changeStock.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(changeStockI.getImage(), 35, 35)));
 		addStockDate.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(addStockI.getImage(), 35, 35)));
+		stockSumm.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(oldSummI.getImage(), 35, 35)));
 		salesTrack.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(salesTrackI.getImage(), 35, 35)));
 		summaryItem.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(sumMI.getImage(), 35, 35)));
 		itemByDates.setIcon(ImageEffect.invertColor(ImageEffect.getScaledImage(sellDateI.getImage(), 35, 35)));
@@ -1785,6 +1791,7 @@ public class Main extends JFrame {
 			viewMerchandise.setIcon(ImageEffect.getScaledImage(viewStockI.getImage(), 35, 35));
 			changeStock.setIcon(ImageEffect.getScaledImage(changeStockI.getImage(), 35, 35));
 			addStockDate.setIcon(ImageEffect.getScaledImage(addStockI.getImage(), 35, 35));
+			stockSumm.setIcon(ImageEffect.getScaledImage(oldSummI.getImage(), 35, 35));
 			salesTrack.setIcon(ImageEffect.getScaledImage(salesTrackI.getImage(), 35, 35));
 			itemByDates.setIcon(ImageEffect.getScaledImage(sellDateI.getImage(), 35, 35));
 			viewAddedStockDate.setIcon(ImageEffect.getScaledImage(viewAddedI.getImage(), 35, 35));
@@ -9383,28 +9390,89 @@ public class Main extends JFrame {
 		else
 			newDayDialog.addSubText(getLocalizedMessage("CANNOT_UNDO"), fg);
 		newDayDialog.addButton(getLocalizedMessage("YES"), Intro.greenM, () -> {
-			notificationButton.setVisible(false);
-			tabbedPane.removeAll();
-			invoiceModels.clear();
-			loadInvoices(currentDate);
-			invoiceTab(currentDate);
-			ModernInputDialog userMessage = new ModernInputDialog(this,
-					(language == Language.SPANISH ? "¿QUÉ ES "
-							: language == Language.PORTUGUES ? "O QUE É O "
-									: language == Language.ENGLISH ? "WHAT IS THE " : "QU'EST-CE QUE LE ")
-							+ getLocalizedMessage("NOTE") + "?",
-					true);
-			userMessage.setIcon(ModernInputDialog.IconType.QUESTION);
-			userMessage.addSubText(getLocalizedMessage("EMPTY"), fg);
-			userMessage.addButton(getLocalizedMessage("YES"), Intro.greenM, () -> {
-				dayMessage = userMessage.getTextField();
-				separatedDialog(true);
-			}, true);
-			userMessage.setColor(bg);
-			userMessage.setTextColor(fg);
-			userMessage.setOverlayColor(bg);
-			userMessage.setVisible(true);// SET VISIBLE
+			if (conf[1] == null || conf[1].equalsIgnoreCase("null") || conf[1].equals("false"))
+				soundEffect(notSound);
 
+			SwingWorker<Void, Void> worker = new SwingWorker<>() {
+				@Override
+				protected Void doInBackground() {
+					notificationButton.setVisible(false);
+					tabbedPane.removeAll();
+					invoiceModels.clear();
+					loadInvoices(currentDate);
+					invoiceTab(currentDate);
+					return null;
+				}
+
+				protected void done() {
+					exBtn();
+					/* If full delete the new table values */
+					if (checkIfFull())
+						try {
+							String currentpath = System.getProperty("user.dir");
+							File dataFolder = new File(currentpath + "\\data");
+							dataFolder.mkdir();
+							File extraFolder = new File(dataFolder + "\\extra");
+							extraFolder.mkdir();
+							File sepFile = new File(extraFolder, "indexM" + ".dll");
+							FileWriter savedF = new FileWriter(sepFile);
+							for (int i = 0; i < 6; i++)
+								for (int j = 0; j < 20; j++)
+									savedF.write("" + System.lineSeparator());
+							savedF.close();
+						} catch (Exception e) {
+							writeError(e);
+						}
+					// cajas values
+					for (int i = 0; i < 6; i++)// table detail
+						for (int j = 0; j < 20; j++) {
+							details[i][j].setText("");
+							detailsM[i][j].setText("");
+						}
+					for (int i = 0; i < 16; i++) {// gastos nad agregados
+						gastosTable[i].setText("");
+						agregadoTable[i].setText("");
+						gTable[i].setText("");
+						aTable[i].setText("");
+					}
+					if (customSeparated) { // CUSTOMIZATION THE NEXT DAY VALUES
+						String nextDayValues[] = customSep();
+						for (int i = 0; i < 7; i++)// set of 1000 -> 50
+							panelCnum[i].setText(TextEffect.isInteger(nextDayValues[i])
+									? (Integer.valueOf(panelCnum[i].getText()) - Integer.valueOf(nextDayValues[i]) + "")
+									: "0");
+						panelCnum[7].setText("");// pix
+						initialDay.setText(Integer.valueOf(panelCnum[0].getText()) * 100
+								+ Integer.valueOf(panelCnum[1].getText()) * 50
+								+ Integer.valueOf(panelCnum[2].getText()) * 20
+								+ Integer.valueOf(panelCnum[3].getText()) * 10
+								+ Integer.valueOf(panelCnum[4].getText()) * 5
+								+ Integer.valueOf(panelCnum[5].getText()) * 2
+								+ Integer.valueOf(panelCnum[6].getText()) * 1 + "");
+						sumF();
+					} else { // DEFAULT NEXT DAY VALUES
+						initialDay.setText(restN + "");
+						for (int i = 0; i < 3; i++)// set of 1000 -> 50
+							panelCnum[i].setText("");
+						panelCnum[7].setText("");// pix
+						sumF();
+					}
+
+					/* NEXT DAY VALUES FOR DIFFERENT REASON */
+					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+					paint(img.getGraphics());
+					File tempFile1 = new File(dataFolder + "\\extra");
+					tempFile1.mkdir();
+					File newFile = new File(tempFile1, "TEMP_NEXT_DAY.png");
+					try {
+						ImageIO.write(img, "png", newFile);
+					} catch (IOException e) {
+						writeError(e);
+					}
+				}
+
+			};
+			worker.execute();
 		});
 		newDayDialog.addButton(getLocalizedMessage("NO"), Intro.redM, newDayDialog::dispose);// NO BUTTON
 		newDayDialog.setColor(bg);
@@ -9418,13 +9486,17 @@ public class Main extends JFrame {
 	}
 
 	/* How do you separate after the end the day */
-	private void afterNewDay(boolean customize) {
+	private void afterNewDay() {
 		if (conf[1] == null || conf[1].equalsIgnoreCase("null") || conf[1].equals("false"))
 			soundEffect(notSound);
 
 		SwingWorker<Void, Void> worker = new SwingWorker<>() {
 			@Override
 			protected Void doInBackground() {
+				return null;
+			}
+
+			protected void done() {
 				exBtn();
 				/* If full delete the new table values */
 				if (checkIfFull())
@@ -9488,29 +9560,8 @@ public class Main extends JFrame {
 				} catch (IOException e) {
 					writeError(e);
 				}
-				return null;
 			}
 
-			@Override
-			protected void done() {
-				if (customize)
-					separadosFrame();
-				/* Notification to view what you need to pay tomorrow */
-				ArrayList<String> lists = getBillsDueToday(bills, WhatDay.TOMORROW);
-				if (lists.size() != 0) {
-					StringBuilder billsDescription = new StringBuilder();
-					for (int i = 0; i < lists.size(); i++) {
-						if (billsDescription.length() > 0) {
-							billsDescription.append("\n"); // Add newline only between entries
-						}
-						billsDescription.append(lists.get(i));
-					}
-					Toast.show(Main.this, Toast.Type.INFO, getLocalizedMessage("BILLS_TMRW") + billsDescription,
-							Intro.notOption);
-				}
-				/* Notification to re-check the money in the cash */
-				Toast.show(Main.this, Toast.Type.WARNING, getLocalizedMessage("REVIEW_M"), Intro.notOption);
-			}
 		};
 		worker.execute();
 	}
@@ -9543,12 +9594,12 @@ public class Main extends JFrame {
 				separatedMethod.addButton("AUTO", Intro.goldM, () -> {
 					customSeparated = false;
 					separatedMethod.dispose();
-					afterNewDay(true);
+					afterNewDay();
 				});
 				separatedMethod.addButton(getLocalizedMessage("CUSTOM"), Intro.blueM, () -> {
 					customSeparated = true;
 					separatedMethod.dispose();
-					afterNewDay(true);
+					afterNewDay();
 				});
 				separatedMethod.setColor(bg);
 				separatedMethod.setTextColor(fg);
@@ -9558,7 +9609,7 @@ public class Main extends JFrame {
 				separadosFrame();
 		} else if (endDay) {
 			customSeparated = false;
-			afterNewDay(false);
+			afterNewDay();
 		}
 	}
 
@@ -10693,6 +10744,7 @@ public class Main extends JFrame {
 			case "SALES_EXCCED" -> " VENTAS SUPERARON LA CANTIDAD DISPONIBLE";
 			case "EXISTED" -> "ARTÍCULO EXISTENTE";
 			case "NEW" -> "ARTÍCULO NUEVO";
+			case "STOCK_OVERVIEW" -> "RESUMEN FINANCIERO";
 			default -> "";
 			};
 		case PORTUGUES:
@@ -10911,6 +10963,7 @@ public class Main extends JFrame {
 			case "SALES_EXCCED" -> " VENDAS EXCEDERAM A QUANTIDADE DISPONÍVEL";
 			case "EXISTED" -> "ITEM EXISTENTE";
 			case "NEW" -> "NOVO ITEM";
+			case "STOCK_OVERVIEW" -> "VISÃO FINANCEIRA";
 			default -> "";
 			};
 		case ENGLISH:
@@ -11129,6 +11182,7 @@ public class Main extends JFrame {
 			case "SALES_EXCCED" -> " SALES EXCEEDED THE AVAILABLE QUANTITY";
 			case "EXISTED" -> "EXISTED ITEM";
 			case "NEW" -> "NEW ITEM";
+			case "STOCK_OVERVIEW" -> "FINANCIAL OVERVIEW";
 			default -> "";
 			};
 		case FRENCH:
@@ -11347,6 +11401,7 @@ public class Main extends JFrame {
 			case "SALES_EXCCED" -> " VENTES ONT DÉPASSÉ LA QUANTITÉ DISPONIBLE";
 			case "EXISTED" -> "ARTICLE EXISTANT";
 			case "NEW" -> "NOUVEL ARTICLE";
+			case "STOCK_OVERVIEW" -> "APERÇU FINANCIER";
 			default -> "";
 			};
 		default:
@@ -14124,6 +14179,130 @@ public class Main extends JFrame {
 				}
 			}
 		}
+	}
+
+	/* Summary for certain merchandise */
+	private void stockSummary() {
+		ArrayList<String> summaryList = new ArrayList<String>();
+		double totalBought = 0, totalSold = 0, totalAvaU = 0, totalAvaS = 0, profit = 0;
+		String title = langIndex == 0 ? "RESUMEN FINANCIERO"
+				: langIndex == 1 ? "VISÃO FINANCEIRA" : langIndex == 2 ? "FINANCIAL OVERVIEW" : "APERÇU FINANCIER";
+		for (Merchandise merch : merchandise) {
+			totalBought += merch.getTotal() * merch.getUnitPrice();
+			totalSold += merch.getSold() * merch.getPrice();
+			totalAvaU += (merch.getTotal() - merch.getSold()) * merch.getUnitPrice();
+			totalAvaS += (merch.getTotal() - merch.getSold()) * merch.getPrice();
+			profit += merch.getSold() * (merch.getPrice() - merch.getUnitPrice());
+		}
+		summaryList.add("---------------------------------------" + getLocalizedMessage("SUMMARY")
+				+ "---------------------------------------");
+
+		if (language == Language.SPANISH) {
+			summaryList.add("🛒 Inversión Total: $" + TextEffect.roundedDouble(totalBought));
+			summaryList.add("💰 Ventas Totales(hasta ahora): $" + TextEffect.roundedDouble(totalSold));
+			summaryList
+					.add("📦 Valor del Inventario Actual (precio de costo): $" + TextEffect.roundedDouble(totalAvaU));
+			summaryList
+					.add("🧾 Valor del Inventario Actual (precio de venta): $" + TextEffect.roundedDouble(totalAvaS));
+			summaryList.add("📈 Ganancia Obtenida: $" + profit);
+		} else if (language == Language.PORTUGUES) {
+			summaryList.add("🛒 Investimento Total: $" + TextEffect.roundedDouble(totalBought));
+			summaryList.add("💰 Vendas Totais (até agora): $" + TextEffect.roundedDouble(totalSold));
+			summaryList.add("📦 Valor Atual do Estoque (preço de custo): $" + TextEffect.roundedDouble(totalAvaU));
+			summaryList.add("🧾 Valor Atual do Estoque (preço de venda): $" + TextEffect.roundedDouble(totalAvaS));
+			summaryList.add("📈 Lucro Obtido: $" + TextEffect.roundedDouble(profit));
+		} else if (language == Language.ENGLISH) {
+			summaryList.add("🛒 Total Investment: $" + TextEffect.roundedDouble(totalBought));
+			summaryList.add("💰 Total Sales (So Far): $" + TextEffect.roundedDouble(totalSold));
+			summaryList.add("📦 Current Inventory Value (Cost Price): $" + TextEffect.roundedDouble(totalAvaU));
+			summaryList.add("🧾 Current Inventory Value (Sale Price): $" + TextEffect.roundedDouble(totalAvaS));
+			summaryList.add("📈 Profit Earned: $" + TextEffect.roundedDouble(profit));
+		} else {
+			summaryList.add("🛒 Investissement Total: $" + TextEffect.roundedDouble(totalBought));
+			summaryList.add("💰 Ventes Totales (jusqu’à présent): $" + TextEffect.roundedDouble(totalSold));
+			summaryList.add("📦 Valeur Actuelle du Stock (prix d’achat): $" + TextEffect.roundedDouble(totalAvaU));
+			summaryList.add("🧾 Valeur Actuelle du Stock (prix de vente): $" + TextEffect.roundedDouble(totalAvaS));
+			summaryList.add("📈 Profit Réalisé: $" + TextEffect.roundedDouble(profit));
+		}
+
+		JDialog itemSummary = new JDialog(this, "", true);
+		itemSummary.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		itemSummary.setUndecorated(true);
+		itemSummary.setSize(getWidth() / 2, 2 * getHeight() / 5);
+		itemSummary.setLocationRelativeTo(this);
+		itemSummary.setLayout(new BorderLayout());
+		itemSummary.setIconImage(colorSelected == 2 ? ImageEffect.getScaledImage(effect2I.getImage(), 35, 35).getImage()
+				: ImageEffect.invertColor(ImageEffect.getScaledImage(effect2I.getImage(), 35, 35)).getImage());
+		itemSummary.setShape(new RoundRectangle2D.Double(0, 0, getWidth() / 2, 2 * getHeight() / 5, 20, 20));
+		overlay.showOverlay();
+
+		// Add rounded corners and shadow effect
+		JPanel contentPane = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+				// Background with rounded corners
+				g2d.setColor(bg);
+				g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+				// Set border color and thickness
+				g2d.setColor(fg); // Example border color
+				g2d.setStroke(new BasicStroke(2)); // Example border thickness (3 pixels)
+				g2d.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 20, 20); // Draw border with small padding
+			}
+		};
+		contentPane.setLayout(new BorderLayout());
+		contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		itemSummary.setContentPane(contentPane);
+
+		// Title Panel
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.setOpaque(false);
+		JLabel titleLabel = new JLabel(title);
+		titleLabel.setFont(new Font("Segoe UI Emoji", Font.BOLD, 18));
+		titleLabel.setForeground(fg);
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 20, 0));
+		JButton closeButton = new JButton(ImageEffect.getScaledImage(closeImage.getImage(), 15, 15));
+		closeButton.setBorderPainted(false);
+		closeButton.setFocusPainted(false);
+		closeButton.setContentAreaFilled(false);
+		closeButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		closeButton.setToolTipText(getLocalizedMessage("EXIT"));
+		closeButton.addActionListener(_ -> {
+			itemSummary.dispose();
+			overlay.hideOverlay();
+		});
+		northPanel.add(titleLabel, BorderLayout.CENTER);
+		northPanel.add(closeButton, BorderLayout.EAST);
+		contentPane.add(northPanel, BorderLayout.NORTH);
+
+		// Holiday List
+		DefaultListModel<String> model = new DefaultListModel<>();
+		summaryList.forEach(model::addElement);
+		JList<String> empSumList = new JList<>(model);
+		empSumList.setCellRenderer(new EmployeeRender());
+		empSumList.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+		empSumList.setBackground(bg);
+		JScrollPane scrollPane = new JScrollPane(empSumList);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+
+		// Key listener for ESC key to close the dialog
+		InputMap inputMap = itemSummary.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = itemSummary.getRootPane().getActionMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "closeDialog");
+		actionMap.put("closeDialog", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemSummary.dispose();
+				overlay.hideOverlay();
+			}
+		});
+
+		itemSummary.setVisible(true);
 	}
 
 	/* Add more qty to existed merchandise */
@@ -17547,13 +17726,13 @@ public class Main extends JFrame {
 				int qty = invoiceModels.get(i).getValueAt(row, 1) != null
 						? Integer.parseInt(invoiceModels.get(i).getValueAt(row, 1).toString())
 						: 0;
-				int price = invoiceModels.get(i).getValueAt(row, 2) != null
-						? Integer.parseInt(invoiceModels.get(i).getValueAt(row, 2).toString())
+				double price = invoiceModels.get(i).getValueAt(row, 2) != null
+						? Double.parseDouble(invoiceModels.get(i).getValueAt(row, 2).toString())
 						: 0;
 				if (item.equals("---"))
 					continue; // Skip separators
 				if (qty > 0 && price > 0)
-					total = price * qty;
+					total = TextEffect.convertDoubleToInt(price * qty);
 
 				salesMap.putIfAbsent(item, new LinkedHashMap<>());
 				salesMap.get(item).put(date, salesMap.get(item).getOrDefault(date, 0) + qty);
